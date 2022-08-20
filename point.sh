@@ -94,6 +94,6 @@ EOF
 # start service
 sudo systemctl daemon-reload
 sudo systemctl enable evmosd
-sudo systemctl restart evmosd && sudo journalctl -u evmosd -f -o cat
+sudo systemctl restart evmosd
 
 echo '=============== SETUP FINISHED ==================='
