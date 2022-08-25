@@ -20,7 +20,7 @@ if [ ! $NODENAME ]; then
 fi
 
 if [ ! $validatorkey ]; then
-	echo "export validatorkey=wallet" >> $HOME/.bash_profile
+	echo "export validatorkey=validatorkey" >> $HOME/.bash_profile
 fi
 echo "export POINT_CHAIN_ID=point_10721-1" >> $HOME/.bash_profile
 source $HOME/.bash_profile
