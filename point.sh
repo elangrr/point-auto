@@ -19,15 +19,15 @@ if [ ! $NODENAME ]; then
 	echo 'export NODENAME='$NODENAME >> $HOME/.bash_profile
 fi
 
-if [ ! $validatorkey ]; then
-	echo "export validatorkey=validatorkey" >> $HOME/.bash_profile
+if [ ! $VALIDATORKEY ]; then
+	echo "export VALIDATORKEY=validatorkey" >> $HOME/.bash_profile
 fi
 echo "export POINT_CHAIN_ID=point_10721-1" >> $HOME/.bash_profile
 source $HOME/.bash_profile
 
 echo '================================================='
 echo -e "Your node name: \e[1m\e[32m$NODENAME\e[0m"
-echo -e "Your wallet name: \e[1m\e[32m$validatorkey\e[0m"
+echo -e "Your wallet name: \e[1m\e[32m$VALIDATORKEY\e[0m"
 echo -e "Your chain name: \e[1m\e[32m$POINT_CHAIN_ID\e[0m"
 echo '================================================='
 sleep 2
@@ -113,4 +113,4 @@ sudo systemctl restart evmosd
 
 echo '=============== SETUP FINISHED ==================='
 echo ' check logs with : journalctl -u evmosd -f -o cat'
-
+echo ' check sync status : evmosd status 2>&1 | jq .SyncInfo
