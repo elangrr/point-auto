@@ -1,5 +1,4 @@
 #!/bin/bash
-
 echo -e "\033[0;35m"
 echo " :::::::::    :::               :::::       ::::::       :::: ::::::::::::";
 echo " :+:          :+:              ::   ::       :+:+:       :+:  :+:      :+:";
@@ -8,6 +7,8 @@ echo " :#++:::++    ++#            ++###++++###    ##+   +#    +#+  #+#         
 echo " +#+          +#+           +#           #+  +#+    #+   #+#  +#+  #+#+#++#";
 echo " #+#          #+#          #+             +# #+#      +# +#+  #+#      #+#";
 echo " #########    ##########  ##               #####       #####  ############";
+echo -e '\e[36mWebsite:\e[39m' https://indonode.dev
+echo -e '\e[36mGithub:\e[39m'  https://github.com/elangrr
 echo -e "\e[0m"
 
 sleep 2 
@@ -18,15 +19,15 @@ if [ ! $NODENAME ]; then
 	echo 'export NODENAME='$NODENAME >> $HOME/.bash_profile
 fi
 
-if [ ! $WALLET ]; then
-	echo "export WALLET=wallet" >> $HOME/.bash_profile
+if [ ! $validatorkey ]; then
+	echo "export validatorkey=wallet" >> $HOME/.bash_profile
 fi
 echo "export POINT_CHAIN_ID=point_10721-1" >> $HOME/.bash_profile
 source $HOME/.bash_profile
 
 echo '================================================='
 echo -e "Your node name: \e[1m\e[32m$NODENAME\e[0m"
-echo -e "Your wallet name: \e[1m\e[32m$WALLET\e[0m"
+echo -e "Your wallet name: \e[1m\e[32m$validatorkey\e[0m"
 echo -e "Your chain name: \e[1m\e[32m$POINT_CHAIN_ID\e[0m"
 echo '================================================='
 sleep 2
@@ -69,9 +70,27 @@ evmosd init $NODENAME --chain-id $POINT_CHAIN_ID
 wget https://raw.githubusercontent.com/pointnetwork/point-chain-config/main/testnet-xNet-Triton-1/config.toml
 wget https://raw.githubusercontent.com/pointnetwork/point-chain-config/main/testnet-xNet-Triton-1/genesis.json
 mv config.toml genesis.json ~/.evmosd/config/
+wget -O $HOME/.evmosd/config/addrbook.json "https://raw.githubusercontent.com/StakeTake/guidecosmos/main/haqq/haqq_53211-1/addrbook.json"
+
+SEEDS="8f7b0add0523ec3648cb48bc12ac35357b1a73ae@195.201.123.87:26656,899eb370da6930cf0bfe01478c82548bb7c71460@34.90.233.163:26656,f2a78c20d5bb567dd05d525b76324a45b5b7aa28@34.90.227.10:26656,4705cf12fb56d7f9eb7144937c9f1b1d8c7b6a4a@34.91.195.139:26656"
+PEERS=""; \
+sed -i.bak -e "s/^seeds *=.*/seeds = \"$SEEDS\"/; s/^persistent_peers *=.*/persistent_peers = \"$PEERS\"/" $HOME/.evmosd/config/config.toml
 
 # validating genesis
 evmosd validate-genesis
+
+#config pruning
+indexer="null"
+pruning="custom"
+pruning_keep_recent="100"
+pruning_keep_every="0"
+pruning_interval="10"
+
+sed -i -e "s/^indexer *=.*/indexer = \"$indexer\"/" $HOME/.evmosd/config/config.toml
+sed -i -e "s/^pruning *=.*/pruning = \"$pruning\"/" $HOME/.evmosd/config/app.toml
+sed -i -e "s/^pruning-keep-recent *=.*/pruning-keep-recent = \"$pruning_keep_recent\"/" $HOME/.evmosd/config/app.toml
+sed -i -e "s/^pruning-keep-every *=.*/pruning-keep-every = \"$pruning_keep_every\"/" $HOME/.evmosd/config/app.toml
+sed -i -e "s/^pruning-interval *=.*/pruning-interval = \"$pruning_interval\"/" $HOME/.evmosd/config/app.toml
 
 echo -e "\e[1m\e[32m4. Starting service... \e[0m" && sleep 1
 # create service
@@ -96,4 +115,7 @@ sudo systemctl daemon-reload
 sudo systemctl enable evmosd
 sudo systemctl restart evmosd
 
+
 echo '=============== SETUP FINISHED ==================='
+echo ' check logs with : journalctl -u evmosd -f -o cat'
+
