@@ -113,4 +113,4 @@ sudo systemctl restart evmosd
 
 echo '=============== SETUP FINISHED ==================='
 echo ' check logs with : journalctl -u evmosd -f -o cat'
-echo ' check sync status : evmosd status 2>&1 | jq .SyncInfo
+echo ' check sync status : evmosd status 2>&1 | jq .SyncInfo '
