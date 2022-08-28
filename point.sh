@@ -59,13 +59,19 @@ git clone https://github.com/pointnetwork/point-chain && cd point-chain
 git checkout xnet-triton
 make install
 
+#config
+evmosd config keyring-backend file
+evmosd config chain-id $POINT_CHAIN_ID
+
 # init
 evmosd init $NODENAME --chain-id $POINT_CHAIN_ID
 
 # download genesis and addrbook
-wget https://raw.githubusercontent.com/pointnetwork/point-chain-config/main/testnet-xNet-Triton-1/config.toml
-wget https://raw.githubusercontent.com/pointnetwork/point-chain-config/main/testnet-xNet-Triton-1/genesis.json
-mv config.toml genesis.json ~/.evmosd/config/
+evmosd tendermint unsafe-reset-all --home $HOME/.evmosd
+rm $HOME/.evmosd/config/genesis.json
+wget -O $HOME/.evmosd/config/genesis.json wget "https://raw.githubusercontent.com/pointnetwork/point-chain-config/main/testnet-xNet-Triton-1/genesis.json"
+wget -O $HOME/.evmosd/config/config.toml wget "https://raw.githubusercontent.com/pointnetwork/point-chain-config/main/testnet-xNet-Triton-1/config.toml"
+wget -O $HOME/.evmosd/config/addrbook.json "https://raw.githubusercontent.com/NodesBlocks/Point-Network/main/addrbook.json"
 
 #config pruning
 indexer="null"
