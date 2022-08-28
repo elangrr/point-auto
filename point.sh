@@ -59,10 +59,6 @@ git clone https://github.com/pointnetwork/point-chain && cd point-chain
 git checkout xnet-triton
 make install
 
-# config
-evmosd config chain-id $POINT_CHAIN_ID
-evmosd config keyring-backend file
-
 # init
 evmosd init $NODENAME --chain-id $POINT_CHAIN_ID
 
@@ -70,9 +66,6 @@ evmosd init $NODENAME --chain-id $POINT_CHAIN_ID
 wget https://raw.githubusercontent.com/pointnetwork/point-chain-config/main/testnet-xNet-Triton-1/config.toml
 wget https://raw.githubusercontent.com/pointnetwork/point-chain-config/main/testnet-xNet-Triton-1/genesis.json
 mv config.toml genesis.json ~/.evmosd/config/
-
-# validating genesis
-evmosd validate-genesis
 
 #config pruning
 indexer="null"
