@@ -59,12 +59,14 @@ git clone https://github.com/pointnetwork/point-chain && cd point-chain
 git checkout xnet-triton
 make install
 
+# init
+evmosd init $NODENAME --chain-id $POINT_CHAIN_ID
+
 #config
+export PATH=$PATH:$(go env GOPATH)/bin
 evmosd config keyring-backend file
 evmosd config chain-id $POINT_CHAIN_ID
 
-# init
-evmosd init $NODENAME --chain-id $POINT_CHAIN_ID
 
 # download genesis and addrbook
 evmosd tendermint unsafe-reset-all --home $HOME/.evmosd
@@ -72,6 +74,10 @@ rm $HOME/.evmosd/config/genesis.json
 wget -O $HOME/.evmosd/config/genesis.json wget "https://raw.githubusercontent.com/pointnetwork/point-chain-config/main/testnet-xNet-Triton-1/genesis.json"
 wget -O $HOME/.evmosd/config/config.toml wget "https://raw.githubusercontent.com/pointnetwork/point-chain-config/main/testnet-xNet-Triton-1/config.toml"
 wget -O $HOME/.evmosd/config/addrbook.json "https://raw.githubusercontent.com/NodesBlocks/Point-Network/main/addrbook.json"
+
+SEEDS="8f7b0add0523ec3648cb48bc12ac35357b1a73ae@195.201.123.87:26656,899eb370da6930cf0bfe01478c82548bb7c71460@34.90.233.163:26656,f2a78c20d5bb567dd05d525b76324a45b5b7aa28@34.90.227.10:26656,4705cf12fb56d7f9eb7144937c9f1b1d8c7b6a4a@34.91.195.139:26656"
+PEERS=""; \
+sed -i.bak -e "s/^seeds *=.*/seeds = \"$SEEDS\"/; s/^persistent_peers *=.*/persistent_peers = \"$PEERS\"/" $HOME/.evmosd/config/config.toml
 
 #config pruning
 indexer="null"
