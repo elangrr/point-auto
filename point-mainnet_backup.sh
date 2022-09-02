@@ -55,20 +55,20 @@ echo -e "\e[1m\e[32m3. Downloading and building binaries... \e[0m" && sleep 1
 # download binary
 cd $HOME
 git clone https://github.com/pointnetwork/point-chain && cd point-chain
-git checkout xnet-triton
+git checkout mainnet
 make install
 
 #config
 export PATH=$PATH:$(go env GOPATH)/bin
-evmosd config keyring-backend file
-evmosd config chain-id $POINT_CHAIN_ID
+pointd config keyring-backend file
+pointd config chain-id $POINT_CHAIN_ID
 
 # init
-evmosd init $NODENAME --chain-id $POINT_CHAIN_ID
+pointd init $NODENAME --chain-id $POINT_CHAIN_ID
 
 # download genesis and addrbook
-wget -O $HOME/.evmosd/config/genesis.json wget "https://raw.githubusercontent.com/pointnetwork/point-chain-config/main/mainnet-1/genesis.json"
-wget -O $HOME/.evmosd/config/config.toml wget "https://raw.githubusercontent.com/pointnetwork/point-chain-config/main/mainnet-1/config.toml"
+wget -O $HOME/.pointd/config/genesis.json wget "https://raw.githubusercontent.com/pointnetwork/point-chain-config/main/mainnet-1/genesis.json"
+wget -O $HOME/.pointd/config/config.toml wget "https://raw.githubusercontent.com/pointnetwork/point-chain-config/main/mainnet-1/config.toml"
 
 
 #config pruning
@@ -78,25 +78,25 @@ pruning_keep_recent="100"
 pruning_keep_every="0"
 pruning_interval="10"
 
-sed -i -e "s/^indexer *=.*/indexer = \"$indexer\"/" $HOME/.evmosd/config/config.toml
-sed -i -e "s/^pruning *=.*/pruning = \"$pruning\"/" $HOME/.evmosd/config/app.toml
-sed -i -e "s/^pruning-keep-recent *=.*/pruning-keep-recent = \"$pruning_keep_recent\"/" $HOME/.evmosd/config/app.toml
-sed -i -e "s/^pruning-keep-every *=.*/pruning-keep-every = \"$pruning_keep_every\"/" $HOME/.evmosd/config/app.toml
-sed -i -e "s/^pruning-interval *=.*/pruning-interval = \"$pruning_interval\"/" $HOME/.evmosd/config/app.toml
+sed -i -e "s/^indexer *=.*/indexer = \"$indexer\"/" $HOME/.pointd/config/config.toml
+sed -i -e "s/^pruning *=.*/pruning = \"$pruning\"/" $HOME/.pointd/config/app.toml
+sed -i -e "s/^pruning-keep-recent *=.*/pruning-keep-recent = \"$pruning_keep_recent\"/" $HOME/.pointd/config/app.toml
+sed -i -e "s/^pruning-keep-every *=.*/pruning-keep-every = \"$pruning_keep_every\"/" $HOME/.pointd/config/app.toml
+sed -i -e "s/^pruning-interval *=.*/pruning-interval = \"$pruning_interval\"/" $HOME/.pointd/config/app.toml
 
 #reset
-evmosd tendermint unsafe-reset-all --home $HOME/.evmosd
+pointd tendermint unsafe-reset-all --home $HOME/.pointd
 
 echo -e "\e[1m\e[32m4. Starting service... \e[0m" && sleep 1
 # create service
-sudo tee /etc/systemd/system/evmosd.service > /dev/null <<EOF
+sudo tee /etc/systemd/system/pointd.service > /dev/null <<EOF
 [Unit]
-Description=evmos
+Description=point
 After=network-online.target
 
 [Service]
 User=$USER
-ExecStart=$(which evmosd) start --home $HOME/.evmosd
+ExecStart=$(which pointd) start --home $HOME/.pointd
 Restart=on-failure
 RestartSec=3
 LimitNOFILE=65535
@@ -107,10 +107,10 @@ EOF
 
 # start service
 sudo systemctl daemon-reload
-sudo systemctl enable evmosd
-sudo systemctl restart evmosd
+sudo systemctl enable pointd
+sudo systemctl restart pointd
 
 
 echo '=============== SETUP FINISHED ==================='
-echo ' check logs with : journalctl -u evmosd -f -o cat'
-echo ' check sync status : evmosd status 2>&1 | jq .SyncInfo '
+echo ' check logs with : journalctl -u pointd -f -o cat'
+echo ' check sync status : pointd status 2>&1 | jq .SyncInfo '
